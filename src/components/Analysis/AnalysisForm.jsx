@@ -34,7 +34,7 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
         try {
             const queryParam = isHospital ? `patientName=${formData.patientName}` : `accountNumber=${formData.accountNumber}`;
             const endpoint = `/api/fraud?${queryParam}`;
-            const response = await fetch(`http://localhost:8080${endpoint}`);
+            const response = await fetch(`https://fraud-detection-3-0wua.onrender.com${endpoint}`);
             if (!response.ok) throw new Error('Search failed');
 
             const results = await response.json();

@@ -35,7 +35,7 @@ const AuthContainer = () => {
 
         try {
             const endpoint = '/api/predict';
-            const response = await fetch(`http://localhost:8080${endpoint}`, {
+            const response = await fetch(`https://fraud-detection-3-0wua.onrender.com${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
