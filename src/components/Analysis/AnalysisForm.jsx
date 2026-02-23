@@ -33,8 +33,7 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
         setIsAnalyzing(true);
         try {
             const queryParam = isHospital ? `patientName=${formData.patientName}` : `accountNumber=${formData.accountNumber}`;
-            const endpoint = isHospital ? `/api/hospital/search?${queryParam}` : `/api/bank/search?${queryParam}`;
-
+            const endpoint = `/api/fraud?${queryParam}`;
             const response = await fetch(`http://localhost:8080${endpoint}`);
             if (!response.ok) throw new Error('Search failed');
 

@@ -34,7 +34,7 @@ const AuthContainer = () => {
         }
 
         try {
-            const endpoint = selectedSector === 'hospital' ? '/api/hospital/check' : '/api/bank/check';
+            const endpoint = '/api/predict';
             const response = await fetch(`http://localhost:8080${endpoint}`, {
                 method: 'POST',
                 headers: {
