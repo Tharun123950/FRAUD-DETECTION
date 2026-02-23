@@ -18,9 +18,23 @@ const AuthContainer = () => {
         setSelectedSector(sectorId);
     };
 
-    const handleCheckFraud = async (data) => {
+    const handleCheckFraud = async (data, isSearch = false) => {
+        if (isSearch) {
+            // Display search results as a report
+            setAnalysisResult({
+                status: data.status === 'FRAUD' ? 'FRAUDULENT!' : data.status,
+                message: data.status === 'FRAUD' ? `This record has been flagged as high risk. Record ID: ${data.id}` : `This record is cleared and verified. Record ID: ${data.id}`,
+                color: data.status === 'FRAUD' ? '#ff2d55' : '#22c55e',
+                Icon: data.status === 'FRAUD' ? Siren : CheckCircle,
+                riskScore: data.calculatedScore !== undefined ? data.calculatedScore : (data.riskScore || 0),
+                timestamp: new Date().toISOString(),
+                isReport: true
+            });
+            return;
+        }
+
         try {
-            const endpoint = selectedSector === 'hospital' ? '/api/fraud/hospital' : '/api/fraud/banking';
+            const endpoint = selectedSector === 'hospital' ? '/api/hospital/check' : '/api/bank/check';
             const response = await fetch(`http://localhost:8080${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -39,20 +53,17 @@ const AuthContainer = () => {
             let color = '#22c55e';
             let Icon = CheckCircle;
 
-            if (result.result === 'FRAUD') {
+            if (result.status === 'FRAUD') {
                 color = '#ff2d55';
                 Icon = Siren;
-            } else if (result.result === 'MEDIUM RISK') {
-                color = '#ff9500';
-                Icon = AlertTriangle;
             }
 
             setAnalysisResult({
-                status: result.result === 'FRAUD' ? 'FRAUDULENT!' : result.result,
-                message: result.reason,
+                status: result.status === 'FRAUD' ? 'FRAUDULENT!' : result.status,
+                message: result.status === 'FRAUD' ? "Suspicious activity detected! Security protocols initiated." : "Transaction verified. No anomalies detected.",
                 color,
                 Icon,
-                riskScore: result.riskScore,
+                riskScore: result.calculatedScore !== undefined ? result.calculatedScore : (result.status === 'FRAUD' ? 92 : 12),
                 timestamp: new Date().toISOString()
             });
         } catch (error) {

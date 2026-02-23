@@ -1,24 +1,37 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, User, ShieldCheck, Mail, LogIn, Cpu } from 'lucide-react';
+import { Lock, ShieldCheck, Mail, LogIn, Cpu } from 'lucide-react';
 
 const LoginForm = ({ onLogin }) => {
-  const [isAdmin, setIsAdmin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (isAdmin) {
-      if (email === 'sreehasa2007@gmail.com' && password === 'sreehasa2007') {
-        onLogin({ email, isAdmin: true });
+    try {
+      const response = await fetch(`http://localhost:8080/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onLogin(data);
       } else {
-        alert('Invalid Admin Credentials');
+        alert(data.error || 'Authentication failed');
       }
-    } else {
-      // General user login (no fixed credentials for users as per previous flow)
-      onLogin({ email, isAdmin: false });
+    } catch (error) {
+      console.error('Auth error:', error);
+      alert('Error connecting to backend server');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,64 +58,34 @@ const LoginForm = ({ onLogin }) => {
         </motion.div>
         <h1 style={{ margin: 0, fontSize: '1.8rem' }}>JAVA <span className="accent-text">AI</span></h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-          Fraud Detection System
+          Admin Control Center
         </p>
       </div>
 
-      <div className="login-toggle" style={{
+      <div style={{
         display: 'flex',
-        background: 'rgba(255,255,255,0.05)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        background: 'rgba(112, 0, 255, 0.1)',
         borderRadius: '12px',
-        padding: '4px',
-        marginBottom: '2rem'
+        padding: '12px',
+        marginBottom: '2rem',
+        border: '1px solid rgba(112, 0, 255, 0.2)'
       }}>
-        <button
-          onClick={() => setIsAdmin(false)}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '8px',
-            border: 'none',
-            background: !isAdmin ? 'rgba(0, 242, 255, 0.15)' : 'transparent',
-            color: !isAdmin ? 'var(--primary)' : 'var(--text-secondary)',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            fontWeight: '600',
-            fontSize: '0.85rem'
-          }}
-        >
-          <User size={16} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
-          USER LOGIN
-        </button>
-        <button
-          onClick={() => setIsAdmin(true)}
-          style={{
-            flex: 1,
-            padding: '10px',
-            borderRadius: '8px',
-            border: 'none',
-            background: isAdmin ? 'rgba(112, 0, 255, 0.15)' : 'transparent',
-            color: isAdmin ? 'var(--secondary)' : 'var(--text-secondary)',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            fontWeight: '600',
-            fontSize: '0.85rem'
-          }}
-        >
-          <ShieldCheck size={16} style={{ verticalAlign: 'middle', marginRight: '8px' }} />
-          ADMIN LOGIN
-        </button>
+        <ShieldCheck size={20} className="secondary-text" />
+        <span style={{ fontWeight: '600', color: 'var(--secondary)', fontSize: '0.9rem' }}>ADMINISTRATOR ACCESS ONLY</span>
       </div>
 
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '1.5rem' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>EMAIL ADDRESS</label>
+          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>ADMIN EMAIL</label>
           <div style={{ position: 'relative' }}>
             <Mail size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-secondary)' }} />
             <input
               type="email"
               className="cyber-input"
-              placeholder="Enter your email"
+              placeholder="admin@java.ai"
               required
               style={{ paddingLeft: '40px' }}
               value={email}
@@ -112,7 +95,7 @@ const LoginForm = ({ onLogin }) => {
         </div>
 
         <div style={{ marginBottom: '2rem' }}>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>PASSWORD</label>
+          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>SECURE PASSWORD</label>
           <div style={{ position: 'relative' }}>
             <Lock size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-secondary)' }} />
             <input
@@ -127,14 +110,25 @@ const LoginForm = ({ onLogin }) => {
           </div>
         </div>
 
-        <button type="submit" className="cyber-button" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-          <LogIn size={20} />
-          {isAdmin ? 'AUTHENTICATE ADMIN' : 'SECURE LOGIN'}
+        <button
+          type="submit"
+          className="cyber-button"
+          disabled={loading}
+          style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
+        >
+          {loading ? (
+            'AUTHENTICATING...'
+          ) : (
+            <>
+              <LogIn size={20} />
+              LOGIN TO ADMIN PANEL
+            </>
+          )}
         </button>
       </form>
 
       <div style={{ marginTop: '2rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-        Authorized Personnel Only • Powered by JAVA AI
+        Authorized Access Only • System Under AI Monitoring
       </div>
     </motion.div>
   );

@@ -5,23 +5,21 @@ import { Activity, Landmark, ShieldAlert, Cpu, Database, ClipboardList, MapPin, 
 const AnalysisForm = ({ sector, onCheckFraud }) => {
     const [formData, setFormData] = useState({});
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [mode, setMode] = useState('analyze'); // 'analyze' or 'search'
 
     const isHospital = sector === 'hospital';
 
     const hospitalFields = [
-        { id: 'patientId', label: 'PATIENT ID', icon: <User size={18} />, placeholder: 'P-100452', type: 'text' },
+        { id: 'patientName', label: 'PATIENT NAME', icon: <User size={18} />, placeholder: 'John Doe', type: 'text' },
+        { id: 'claimAmount', label: 'CLAIM AMOUNT ($)', icon: <CreditCard size={18} />, placeholder: '5000.00', type: 'number' },
         { id: 'treatmentType', label: 'TREATMENT TYPE', icon: <ClipboardList size={18} />, placeholder: 'Emergency / Routine', type: 'text' },
-        { id: 'billAmount', label: 'BILL AMOUNT ($)', icon: <CreditCard size={18} />, placeholder: '5000.00', type: 'number' },
-        { id: 'insuranceClaim', label: 'INSURANCE CLAIM ($)', icon: <ShieldAlert size={18} />, placeholder: '4500.00', type: 'number' },
-        { id: 'riskScore', label: 'RISK SCORE (0-100)', icon: <Activity size={18} />, placeholder: '25', type: 'number' },
     ];
 
     const bankingFields = [
-        { id: 'accountId', label: 'ACCOUNT ID', icon: <Database size={18} />, placeholder: 'ACC-889021', type: 'text' },
-        { id: 'transactionAmount', label: 'TRANSACTION AMOUNT ($)', icon: <CreditCard size={18} />, placeholder: '120.50', type: 'number' },
-        { id: 'location', label: 'LOCATION', icon: <MapPin size={18} />, placeholder: 'San Francisco, CA', type: 'text' },
-        { id: 'time', label: 'TIME', icon: <Clock size={18} />, placeholder: '14:25:00', type: 'text' },
-        { id: 'creditScore', label: 'CREDIT SCORE', icon: <Activity size={18} />, placeholder: '750', type: 'number' },
+        { id: 'accountNumber', label: 'ACCOUNT NUMBER', icon: <Database size={18} />, placeholder: 'ACC-889021', type: 'text' },
+        { id: 'amount', label: 'TRANSACTION AMOUNT ($)', icon: <CreditCard size={18} />, placeholder: '120.50', type: 'number' },
+        { id: 'riskScore', label: 'RISK SCORE (0-100)', icon: <Activity size={18} />, placeholder: '25', type: 'number' },
+        { id: 'cibilScore', label: 'CIBIL SCORE (300-900)', icon: <ShieldAlert size={18} />, placeholder: '750', type: 'number' },
     ];
 
     const fields = isHospital ? hospitalFields : bankingFields;
@@ -30,10 +28,39 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
         setFormData(prev => ({ ...prev, [id]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
         setIsAnalyzing(true);
-        // Simulate complex AI analysis
+        try {
+            const queryParam = isHospital ? `patientName=${formData.patientName}` : `accountNumber=${formData.accountNumber}`;
+            const endpoint = isHospital ? `/api/hospital/search?${queryParam}` : `/api/bank/search?${queryParam}`;
+
+            const response = await fetch(`http://localhost:8080${endpoint}`);
+            if (!response.ok) throw new Error('Search failed');
+
+            const results = await response.json();
+            if (results.length > 0) {
+                // Return the first match for reporting
+                onCheckFraud(results[0], true);
+            } else {
+                alert('No records found in database');
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+            alert('Error connecting to backend for search');
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (mode === 'search') {
+            handleSearch(e);
+            return;
+        }
+
+        setIsAnalyzing(true);
         setTimeout(() => {
             setIsAnalyzing(false);
             onCheckFraud(formData);
@@ -63,15 +90,52 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
                     {isHospital ? <Activity size={48} /> : <Landmark size={48} />}
                 </div>
                 <h2 style={{ margin: 0, fontSize: '1.5rem', textTransform: 'uppercase' }}>
-                    {sector} <span className="accent-text">Analysis</span>
+                    {sector} <span className="accent-text">{mode === 'analyze' ? 'Analysis' : 'Search & Report'}</span>
                 </h2>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                    Real-time AI behavioral scan for {sector} fraud detection
-                </p>
+
+                {/* Mode Toggle */}
+                <div style={{
+                    display: 'flex',
+                    background: 'rgba(255,255,255,0.05)',
+                    borderRadius: '10px',
+                    padding: '4px',
+                    marginTop: '1.5rem',
+                    width: 'fit-content',
+                    marginInline: 'auto'
+                }}>
+                    <button
+                        onClick={() => setMode('analyze')}
+                        style={{
+                            padding: '8px 16px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            background: mode === 'analyze' ? (isHospital ? '#ff2d55' : 'var(--primary)') : 'transparent',
+                            color: mode === 'analyze' ? '#fff' : 'var(--text-secondary)',
+                            transition: '0.3s'
+                        }}
+                    >NEW SCAN</button>
+                    <button
+                        onClick={() => setMode('search')}
+                        style={{
+                            padding: '8px 16px',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontSize: '0.8rem',
+                            fontWeight: '600',
+                            background: mode === 'search' ? (isHospital ? '#ff2d55' : 'var(--primary)') : 'transparent',
+                            color: mode === 'search' ? '#fff' : 'var(--text-secondary)',
+                            transition: '0.3s'
+                        }}
+                    >DATABASE SEARCH</button>
+                </div>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.2rem' }}>
-                {fields.map(field => (
+                {fields.filter(f => mode === 'analyze' || f.id === (isHospital ? 'patientName' : 'accountNumber')).map(field => (
                     <div key={field.id}>
                         <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: '600' }}>
                             {field.label}
@@ -111,18 +175,15 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
                     >
                         {isAnalyzing ? (
                             <>
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                >
+                                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
                                     <Cpu size={20} />
                                 </motion.div>
-                                ANALYZING PATTERNS...
+                                {mode === 'analyze' ? 'ANALYZING PATTERNS...' : 'SEARCHING DATABASE...'}
                             </>
                         ) : (
                             <>
-                                <ShieldAlert size={20} />
-                                CHECK FRAUD
+                                {mode === 'analyze' ? <ShieldAlert size={20} /> : <Database size={20} />}
+                                {mode === 'analyze' ? 'CHECK FRAUD' : 'FIND & GENERATE REPORT'}
                             </>
                         )}
                     </button>
