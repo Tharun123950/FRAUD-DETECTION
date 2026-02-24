@@ -101,7 +101,12 @@ const AuthContainer = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="nav-header"
+                        style={{
+                            position: 'fixed',
+                            top: '2rem',
+                            left: '2rem',
+                            zIndex: 1000
+                        }}
                     >
                         <button
                             onClick={handleBack}
@@ -158,10 +163,12 @@ const AuthContainer = () => {
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                className="glass-card auth-card"
+                                className="glass-card"
                                 style={{
+                                    padding: '3rem',
                                     textAlign: 'center',
                                     border: `2px solid ${analysisResult.color}`,
+                                    maxWidth: '600px',
                                     width: '100%'
                                 }}
                             >
@@ -204,7 +211,21 @@ const AuthContainer = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="status-indicator"
+                    style={{
+                        position: 'fixed',
+                        bottom: '2rem',
+                        left: '2rem',
+                        padding: '12px 20px',
+                        background: 'rgba(0,0,0,0.8)',
+                        border: '1px solid var(--primary)',
+                        borderRadius: '12px',
+                        fontSize: '0.8rem',
+                        color: 'var(--primary)',
+                        zIndex: 100,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px'
+                    }}
                 >
                     <div style={{ width: '8px', height: '8px', background: 'var(--primary)', borderRadius: '50%', boxShadow: '0 0 8px var(--primary)' }}></div>
                     SESSION ACTIVE: {user.isAdmin ? 'ADMIN_ROOT' : 'USER_SECURE'}

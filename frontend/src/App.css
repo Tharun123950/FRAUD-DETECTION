@@ -9,52 +9,6 @@
   position: relative;
 }
 
-.nav-header {
-  position: fixed;
-  top: 2rem;
-  left: 2rem;
-  z-index: 1000;
-}
-
-.status-indicator {
-  position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  padding: 12px 20px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid var(--primary);
-  border-radius: 12px;
-  font-size: 0.8rem;
-  color: var(--primary);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.auth-card {
-  max-width: 450px;
-  padding: 3rem;
-  margin: 0 auto;
-}
-
-.sector-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-}
-
-.sector-card {
-  padding: 2.5rem;
-}
-
-@media (max-width: 768px) {
-  .sector-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
-
 .bg-nodes {
   position: fixed;
   top: 0;
@@ -63,28 +17,4 @@
   height: 100%;
   z-index: -1;
   opacity: 0.3;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-  .app-container {
-    padding: 10px;
-    align-items: flex-start;
-    padding-top: 80px;
-    /* Space for the back button */
-  }
-
-  .nav-header {
-    top: 1rem;
-    left: 1rem;
-  }
-
-  .status-indicator {
-    bottom: 1rem;
-    left: 1rem;
-    right: 1rem;
-    /* Full width on mobile */
-    padding: 8px 15px;
-    font-size: 0.7rem;
-  }
 }

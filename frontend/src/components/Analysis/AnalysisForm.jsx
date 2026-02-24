@@ -70,9 +70,12 @@ const AnalysisForm = ({ sector, onCheckFraud }) => {
         <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="glass-card auth-card"
+            className="glass-card"
             style={{
                 width: '100%',
+                maxWidth: '600px',
+                padding: '2.5rem',
+                margin: '0 auto',
                 border: `1px solid ${isHospital ? '#ff2d55' : 'var(--primary)'}44`
             }}
         >
