@@ -39,11 +39,9 @@ const LoginForm = ({ onLogin }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card login-container"
+      className="glass-card login-container auth-card"
       style={{
-        padding: '3rem',
         width: '100%',
-        maxWidth: '450px',
         position: 'relative',
         overflow: 'hidden'
       }}

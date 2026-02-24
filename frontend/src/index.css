@@ -10,7 +10,7 @@
   --border-color: rgba(255, 255, 255, 0.1);
   --text-primary: #ffffff;
   --text-secondary: #a0a0b0;
-  
+
   font-family: 'Inter', system-ui, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -88,7 +88,10 @@ body {
   background: rgba(255, 255, 255, 0.1);
 }
 
-h1, h2, h3, .logo-text {
+h1,
+h2,
+h3,
+.logo-text {
   font-family: 'Orbitron', sans-serif;
   letter-spacing: 2px;
 }
@@ -99,11 +102,58 @@ h1, h2, h3, .logo-text {
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 .floating {
   animation: float 6s ease-in-out infinite;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  :root {
+    --card-padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.25rem !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .glass-card {
+    border-radius: 16px;
+    padding: var(--card-padding) !important;
+  }
+
+  .cyber-button {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --card-padding: 1.25rem;
+  }
+
+  .app-container {
+    padding: 15px;
+  }
 }

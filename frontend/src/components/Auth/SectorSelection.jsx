@@ -39,7 +39,7 @@ const SectorSelection = ({ onSelect }) => {
                 <p style={{ color: 'var(--text-secondary)' }}>Choose a specialized AI engine for targeted fraud analysis</p>
             </motion.div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+            <div className="sector-grid">
                 {sectors.map((sector, index) => (
                     <motion.div
                         key={sector.id}
@@ -50,7 +50,6 @@ const SectorSelection = ({ onSelect }) => {
                         onClick={() => onSelect(sector.id)}
                         className="glass-card sector-card"
                         style={{
-                            padding: '2.5rem',
                             cursor: 'pointer',
                             textAlign: 'left',
                             display: 'flex',
