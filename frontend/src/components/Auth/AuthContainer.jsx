@@ -68,7 +68,7 @@ const AuthContainer = () => {
             });
         } catch (error) {
             console.error('Fraud analysis error:', error);
-            alert('Error connecting to AI Backend. Please ensure the Spring Boot server is running on port 8080.');
+            alert('Error connecting to AI Backend. Please ensure the server is online.');
         }
     };
 
